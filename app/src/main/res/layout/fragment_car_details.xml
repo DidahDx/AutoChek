@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.carDetails.CarDetailsFragment">
+    <include
+        android:id="@+id/container"
+        layout="@layout/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <ImageView
+        android:id="@+id/iv_car"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:contentDescription="@string/car_image" />
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_car_images"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        tools:listitem="@layout/item_car_media"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_car_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/car_name"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_car_name_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_car_name_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="Acura MDX - 2021"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_car_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_model"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/model"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_model_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_car_name" />
+
+        <TextView
+            android:id="@+id/tv_model_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            tools:text="Bmw"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_model"
+            app:layout_constraintTop_toBottomOf="@id/tv_car_name"  />
+
+        <TextView
+            android:id="@+id/tv_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/year"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_year_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_model" />
+
+        <TextView
+            android:id="@+id/tv_year_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="2021"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_year"
+            app:layout_constraintTop_toBottomOf="@id/tv_model" />
+
+        <TextView
+            android:id="@+id/tv_engine_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/engine_type"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_engine_type_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_year" />
+
+        <TextView
+            android:id="@+id/tv_engine_type_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="3-cylinder(I3)"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_engine_type"
+            app:layout_constraintTop_toBottomOf="@id/tv_year" />
+
+        <TextView
+            android:id="@+id/tv_mileage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/mileage"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_mileage_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_engine_type" />
+
+        <TextView
+            android:id="@+id/tv_mileage_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="1000 km"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_mileage"
+            app:layout_constraintTop_toBottomOf="@id/tv_engine_type" />
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/location"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_location_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_mileage" />
+
+        <TextView
+            android:id="@+id/tv_location_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="Kampala Lagos KE"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_location"
+            app:layout_constraintTop_toBottomOf="@id/tv_mileage" />
+
+        <TextView
+            android:id="@+id/tv_owner_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/owner_type"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_owner_type_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_location" />
+
+        <TextView
+            android:id="@+id/tv_owner_type_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="Company"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_owner_type"
+            app:layout_constraintTop_toBottomOf="@id/tv_location" />
+
+        <TextView
+            android:id="@+id/tv_transmission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/transmission"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_transmission_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_owner_type" />
+
+        <TextView
+            android:id="@+id/tv_transmission_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="Automatic"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_transmission"
+            app:layout_constraintTop_toBottomOf="@id/tv_owner_type" />
+
+        <TextView
+            android:id="@+id/tv_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/selling_condition"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_condition_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_transmission" />
+
+        <TextView
+            android:id="@+id/tv_condition_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="new"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_condition"
+            app:layout_constraintTop_toBottomOf="@id/tv_transmission" />
+
+        <TextView
+            android:id="@+id/tv_fuel_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/fuel_type"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_fuel_type_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_condition" />
+
+        <TextView
+            android:id="@+id/tv_fuel_type_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="petrol"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_fuel_type"
+            app:layout_constraintTop_toBottomOf="@id/tv_condition" />
+
+        <TextView
+            android:id="@+id/tv_body_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/body_type"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_body_type_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_fuel_type" />
+
+        <TextView
+            android:id="@+id/tv_body_type_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="Convertible"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_body_type"
+            app:layout_constraintTop_toBottomOf="@id/tv_fuel_type" />
+
+
+        <TextView
+            android:id="@+id/tv_interior_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/interior_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_interior_color_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_body_type" />
+
+        <TextView
+            android:id="@+id/tv_interior_color_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="Red"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_interior_color"
+            app:layout_constraintTop_toBottomOf="@id/tv_body_type" />
+
+        <TextView
+            android:id="@+id/tv_exterior_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/gilroy_extra_bold"
+            android:text="@string/exterior_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_exterior_color_detail"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_interior_color" />
+
+        <TextView
+            android:id="@+id/tv_exterior_color_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            tools:text="White"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_exterior_color"
+            app:layout_constraintTop_toBottomOf="@id/tv_interior_color" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>
+</ScrollView>

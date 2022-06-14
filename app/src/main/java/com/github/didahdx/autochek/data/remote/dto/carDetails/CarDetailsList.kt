@@ -1,0 +1,42 @@
+package com.github.didahdx.autochek.data.remote.dto.carDetails
+
+import com.github.didahdx.autochek.data.remote.dto.Model
+
+data class CarDetailsList(
+    val bodyType: BodyType?,
+    val carName: String?,
+    val city: String?,
+    val country: String?,
+    val createdAt: String,
+    val depositReceived: Boolean,
+    val engineType: String?,
+    val exteriorColor: String?,
+    val financingSettings: FinancingSettings?,
+    val fuelType: String?,
+    val hasFinancing: Boolean?,
+    val hasThreeDImage: Boolean?,
+    val hasWarranty: Boolean?,
+    val id: String,
+    val imageUrl: String?,
+    val installment: Double?,
+    val insured: Boolean,
+    val interiorColor: String?,
+    val isFeatured: Boolean,
+    val loanValue: Double?,
+    val marketplaceOldPrice: Int?,
+    val marketplacePrice: Int?,
+    val marketplaceVisible: Boolean?,
+    val marketplaceVisibleDate: String?,
+    val mileage: Int?,
+    val mileageUnit: String?,
+    val model: Model?,
+    val ownerType: String?,
+    val sellingCondition: String?,
+    val sold: Boolean?,
+    val state: String?,
+    val transmission: String?,
+    val updatedAt: String?,
+    val vin: String?,
+    val websiteUrl: String?,
+    val year: Int?
+)

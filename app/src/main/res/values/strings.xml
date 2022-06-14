@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">AutoChek</string>
+    <string name="home">Home</string>
+    <string name="favorite">Favourite</string>
+    <string name="chat">Chats</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification">Notifications</string>
+    <string name="cart">Cart</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="company_logo_image">company logo image</string>
+    <string name="product_image">product image</string>
+    <string name="add">Add</string>
+    <string name="sold">Sold</string>
+    <string name="not_available">N/A</string>
+    <string name="explore">Explore</string>
+    <string name="car_image">Car Image</string>
+    <string name="product">Product</string>
+    <string name="model">Model</string>
+    <string name="year">Year</string>
+    <string name="engine_type">Engine Type</string>
+    <string name="mileage">Mileage</string>
+    <string name="car_name">Car Name</string>
+    <string name="location">Location</string>
+    <string name="owner_type">Owner Type</string>
+    <string name="transmission">Transmission</string>
+    <string name="selling_condition">Selling Condition</string>
+    <string name="fuel_type">Fuel Type</string>
+    <string name="body_type">Body Type</string>
+    <string name="interior_color">Interior Color</string>
+    <string name="exterior_color">Exterior Color</string>
+</resources>
