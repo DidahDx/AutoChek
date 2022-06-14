@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.github.didahdx.autochek.ui.home.HomeFragment"
+        android:label="Explore"
+        tools:layout="@layout/fragment_home" >
+        <argument
+            android:name="cardId"
+            app:argType="string"
+            android:defaultValue=""
+            />
+        <action
+            android:id="@+id/action_homeFragment_to_carDetailsFragment"
+            app:destination="@id/carDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.github.didahdx.autochek.ui.favourite.FavouriteFragment"
+        android:label="Favourite"
+        tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.github.didahdx.autochek.ui.chat.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.github.didahdx.autochek.ui.notification.NotificationFragment"
+        android:label="Notification"
+        tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/carDetailsFragment"
+        android:name="com.github.didahdx.autochek.ui.carDetails.CarDetailsFragment"
+        android:label="fragment_car_details"
+        tools:layout="@layout/fragment_car_details" >
+        <action
+            android:id="@+id/action_carDetailsFragment_to_imageFragment"
+            app:destination="@id/imageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageFragment"
+        android:name="com.github.didahdx.autochek.ui.fullScreenImage.ImageFragment"
+        android:label="fragment_image"
+        tools:layout="@layout/fragment_image" >
+        <argument
+            android:name="image_url"
+            app:argType="string"
+            android:defaultValue=""
+            />
+    </fragment>
+</navigation>
