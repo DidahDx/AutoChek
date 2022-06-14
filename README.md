@@ -18,7 +18,10 @@ Hilt has been used for Dependency injection.
 The project is built using the MVVM architectural pattern. Mvvm allows for the separation of concern which also makes testing easier.
 
 ## ScreenShots
-  <img src="art/loading_screen.jpg" width="200" style="max-width:100%;">
+  <img src="art/splash_screen.png" width="200" style="max-width:100%;"> <img src="art/loading_screen.png" width="200" style="max-width:100%;">
+  <img src="art/home.png" width="200" style="max-width:100%;"> <img src="art/car_detail.png" width="200" style="max-width:100%;">
+  <img src="art/car_details_1.png" width="200" style="max-width:100%;"> <img src="art/image_full_screen.png" width="200" style="max-width:100%;">
+  <img src="art/image_full_screen_1.png" width="200" style="max-width:100%;">
 
 ## Libraries
 
