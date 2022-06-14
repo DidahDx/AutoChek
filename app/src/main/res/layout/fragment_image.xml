@@ -15,7 +15,8 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIcon="@drawable/ic_back_arrow"
+        android:background="@android:color/transparent"
         android:layout_height="?attr/actionBarSize"
         />
 </FrameLayout>

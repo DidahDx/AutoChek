@@ -30,4 +30,7 @@
     <string name="body_type">Body Type</string>
     <string name="interior_color">Interior Color</string>
     <string name="exterior_color">Exterior Color</string>
+    <string name="retry">Retry</string>
+    <string name="no_results">No results 😓</string>
+    <string name="price">Price %s/=</string>
 </resources>

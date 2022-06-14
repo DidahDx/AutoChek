@@ -113,11 +113,44 @@ class CarDetailsFragment : Fragment() {
             carMediaAdapter.submitList(it)
         }
 
+        binding.retryButton.setOnClickListener {
+            viewModel.fetchData(cardId)
+        }
+
+        viewModel.uiState.observe(viewLifecycleOwner) {
+            when (it) {
+                is UiState.Error -> {
+                    binding.retryButton.show()
+                    binding.tvError.show()
+                    binding.tvError.text = it.error
+                    binding.groupTop.hide()
+                    binding.groupCarDetails.hide()
+                    binding.videoView.hide()
+                    binding.progressBar.hide()
+                }
+                is UiState.Loading -> {
+                    binding.progressBar.show()
+                    binding.groupTop.hide()
+                    binding.groupCarDetails.hide()
+                    binding.retryButton.hide()
+                    binding.tvError.hide()
+                    binding.videoView.hide()
+                }
+                UiState.Success -> {
+                    binding.retryButton.hide()
+                    binding.tvError.hide()
+                    binding.progressBar.hide()
+                    binding.groupTop.show()
+                    binding.groupCarDetails.show()
+                }
+            }
+        }
+
+
         viewModel.carDetails.observe(viewLifecycleOwner) { carDetail ->
             val notAvailable = getString(R.string.not_available)
             if (carDetail != null) {
                 binding.tvCarNameDetail.text = carDetail.carName ?: notAvailable
-                Timber.e("sell condit ${carDetail.sellingCondition}")
                 binding.tvModelDetail.text = carDetail.model?.name ?: notAvailable
                 binding.tvYearDetail.text = carDetail.year.toString()
                 binding.tvEngineTypeDetail.text = carDetail.engineType ?: notAvailable
@@ -128,9 +161,33 @@ class CarDetailsFragment : Fragment() {
 
                 binding.tvMileageDetail.text = millage
 
+                val locationBuilder = StringBuilder()
+                if (carDetail.state != null && carDetail.state.isNotEmpty()) {
+                    locationBuilder.append(carDetail.state)
+                }
+                if (carDetail.city != null && carDetail.city.isNotEmpty()) {
+                    locationBuilder.append(", ${carDetail.city}")
+                }
+                if (carDetail.country != null && carDetail.country.isNotEmpty()) {
+                    locationBuilder.append(", ${carDetail.country}")
+                }
 
-                binding.tvLocationDetail.text =
-                    "${carDetail.state}, ${carDetail.city}, ${carDetail.country}"
+                if (locationBuilder.isEmpty()) {
+                    locationBuilder.append(notAvailable)
+                }
+
+                if (carDetail.sold != null && carDetail.sold) {
+                    binding.tvSold.show()
+                } else {
+                    binding.tvSold.hide()
+                }
+
+                val price = if (carDetail.marketplacePrice != null) {
+                  NumberFormat.formatNumber(carDetail.marketplacePrice)
+                } else notAvailable
+
+                binding.tvPrice.text =  getString(R.string.price,price)
+                binding.tvLocationDetail.text = locationBuilder.toString()
                 binding.tvOwnerTypeDetail.text = carDetail.ownerType ?: notAvailable
                 binding.tvTransmissionDetail.text = carDetail.transmission ?: notAvailable
                 binding.tvConditionDetail.text = carDetail.sellingCondition ?: notAvailable

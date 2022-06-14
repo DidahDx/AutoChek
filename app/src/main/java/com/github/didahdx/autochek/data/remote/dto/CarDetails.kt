@@ -2,7 +2,7 @@ package com.github.didahdx.autochek.data.remote.dto
 
 data class CarDetails(
     val bodyTypeId: String?,
-    val city: String,
+    val city: String?,
     val depositReceived: Boolean,
     val fuelType: String?,
     val gradeScore: Double?,
@@ -22,7 +22,7 @@ data class CarDetails(
     val sellingCondition: String?,
     val model: Model?,
     val sold: Boolean,
-    val state: String,
+    val state: String?,
     val stats: Stats?,
     val title: String?,
     val transmission: String?,

@@ -21,7 +21,7 @@ class CarMediaAdapter(private val onItemClickListener: OnItemClickListener) :
         init {
             binding.apply {
                 root.setOnClickListener {
-                    val position = adapterPosition
+                    val position = absoluteAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onItemClickListener.onItemClickListener(getItem(position))
                     }

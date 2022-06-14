@@ -105,6 +105,7 @@
             android:maxLines="1"
             android:textSize="12sp"
             android:gravity="center"
+            android:drawablePadding="2dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="3dp"
             android:textColor="@color/darkblue"
@@ -112,7 +113,7 @@
             app:layout_constraintStart_toEndOf="@id/tv_brand"
             app:layout_constraintTop_toBottomOf="@id/tv_rating"
             tools:text="Nairobi"
-            app:drawableStartCompat="@drawable/ic_location" />
+            app:drawableEndCompat="@drawable/ic_location" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

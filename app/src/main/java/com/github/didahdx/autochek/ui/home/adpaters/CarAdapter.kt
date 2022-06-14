@@ -2,8 +2,8 @@ package com.github.didahdx.autochek.ui.home.adpaters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.github.didahdx.autochek.R
@@ -18,7 +18,7 @@ import java.text.DecimalFormat
  * @author Daniel Didah on 6/13/22
  */
 class CarAdapter(private val clickListener: OnItemClickListener) :
-    ListAdapter<CarDetails, CarAdapter.CarViewHolder>(CarDiffUtil()) {
+    PagingDataAdapter<CarDetails, CarAdapter.CarViewHolder>(CarDiffUtil()) {
 
     inner class CarViewHolder(private val binding: ItemProductBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -30,33 +30,46 @@ class CarAdapter(private val clickListener: OnItemClickListener) :
             ratingDecimalPoint.roundingMode = RoundingMode.DOWN
             binding.apply {
                 root.setOnClickListener {
-                    val position = adapterPosition
+                    val position = absoluteAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
-                        clickListener.onItemClickListener(getItem(position))
+                        getItem(position)?.let { it1 -> clickListener.onItemClickListener(it1) }
                     }
                 }
             }
         }
 
         fun bind(carDetails: CarDetails) {
+            val notAvailable = binding.root.context.getString(R.string.not_available)
             Glide.with(binding.root.context)
                 .load(carDetails.imageUrl)
                 .error(R.drawable.ic_error_image)
                 .fitCenter()
                 .into(binding.ivImage)
+
             if (carDetails.sold) binding.tvSold.show() else binding.tvSold.hide()
             binding.tvTitle.text = carDetails.title
             binding.tvBrand.text = carDetails.sellingCondition
-            binding.tvLocation.text =  " ${carDetails.city} ${carDetails.state}"
+
+            val locationBuilder = StringBuilder()
+            if (carDetails.city != null && carDetails.city.isNotEmpty()) {
+                locationBuilder.append(carDetails.city)
+            }
+            if (carDetails.state != null && carDetails.state.isNotEmpty()) {
+                locationBuilder.append(" ${carDetails.state}")
+            }
+            if (locationBuilder.isEmpty()) {
+                locationBuilder.append(notAvailable)
+            }
+            binding.tvLocation.text = locationBuilder.toString()
+
             binding.tvPrice.text = twoDecimalPoint.format(carDetails.marketplacePrice)?.toString()
 
             val rating = if (carDetails.gradeScore == null) {
-                binding.root.context.getString(R.string.not_available)
+                notAvailable
             } else {
                 ratingDecimalPoint.format(carDetails.gradeScore).toString()
             }
             binding.tvRating.text = rating
-
         }
     }
 
@@ -66,7 +79,7 @@ class CarAdapter(private val clickListener: OnItemClickListener) :
     }
 
     override fun onBindViewHolder(holder: CarViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let { holder.bind(it) }
     }
 }
 
