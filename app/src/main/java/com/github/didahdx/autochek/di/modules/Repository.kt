@@ -16,5 +16,5 @@ import javax.inject.Singleton
 abstract class Repository {
     @Binds
     @Singleton
-    abstract fun bindCarRepository(shopRepositoryImpl: CarRepositoryImpl): CarRepository
+    abstract fun bindCarRepository(carRepositoryImpl: CarRepositoryImpl): CarRepository
 }

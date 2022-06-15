@@ -1,6 +1,7 @@
 package com.github.didahdx.autochek.ui.carDetails
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.didahdx.autochek.data.remote.dto.CarMedia
@@ -13,20 +14,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CarDetailsViewModel @Inject constructor(
-    val carRepository: CarRepository
+    private val carRepository: CarRepository,
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
+    private val cardId = state.getLiveData(CarDetailsFragment.CARD_ID,"")
     val carMedia = MutableLiveData<List<CarMedia>>()
     val carDetails = MutableLiveData<CarDetailsList>()
     val selectedCarDetail = MutableLiveData<CarMedia>()
     val uiState = MutableLiveData<UiState>()
 
-    fun fetchData(cardId: String) {
+    init {
+        fetchData()
+    }
+
+    fun fetchData() {
         viewModelScope.launch {
             try {
-               uiState.postValue(UiState.Loading(true))
-                carDetails.postValue(carRepository.getCarDetails(cardId))
-                val mediaList = carRepository.getCarMedia(cardId).carMediaList
+               uiState.postValue(UiState.Loading)
+                carDetails.postValue(carRepository.getCarDetails(cardId.value!!))
+                val mediaList = carRepository.getCarMedia(cardId.value!!).carMediaList
                 carMedia.postValue(mediaList)
                 update(mediaList[0])
                 uiState.postValue(UiState.Success)

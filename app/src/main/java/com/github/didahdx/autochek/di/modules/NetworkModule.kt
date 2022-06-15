@@ -67,7 +67,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesShopApi(retrofit: Retrofit): CarApiServices {
+    fun providesCarApi(retrofit: Retrofit): CarApiServices {
         return retrofit.create(CarApiServices::class.java)
     }
 

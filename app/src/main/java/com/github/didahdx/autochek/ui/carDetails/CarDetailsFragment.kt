@@ -31,16 +31,13 @@ class CarDetailsFragment : Fragment() {
     }
 
     val viewModel by viewModels<CarDetailsViewModel>()
-    var cardId = ""
+
     private var _binding: FragmentCarDetailsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments?.getString(CARD_ID).isNullOrEmpty()) this.findNavController().navigateUp()
-        cardId = arguments?.getString(CARD_ID) ?: ""
-        Timber.e("cardId $cardId")
-        viewModel.fetchData(cardId)
     }
 
 
@@ -89,7 +86,6 @@ class CarDetailsFragment : Fragment() {
         viewModel.selectedCarDetail.observe(viewLifecycleOwner) {
             if (it.type.contains("video")) {
                 //play video
-
                 binding.videoView.show()
                 binding.ivCar.hide()
                 binding.videoView.apply {
@@ -114,7 +110,7 @@ class CarDetailsFragment : Fragment() {
         }
 
         binding.retryButton.setOnClickListener {
-            viewModel.fetchData(cardId)
+            viewModel.fetchData()
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
@@ -200,6 +196,12 @@ class CarDetailsFragment : Fragment() {
         }
 
 
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        binding.videoView.setMediaController(null)
     }
 
 
