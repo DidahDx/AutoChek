@@ -1,11 +1,11 @@
 package com.github.didahdx.autochek.ui.carDetails
 
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -21,7 +21,6 @@ import com.github.didahdx.autochek.ui.carDetails.adapter.CarMediaAdapter
 import com.github.didahdx.autochek.ui.carDetails.adapter.OnItemClickListener
 import com.github.didahdx.autochek.ui.fullScreenImage.ImageFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class CarDetailsFragment : Fragment() {
@@ -31,16 +30,13 @@ class CarDetailsFragment : Fragment() {
     }
 
     val viewModel by viewModels<CarDetailsViewModel>()
-    var cardId = ""
+    private var videoPlayer: MediaPlayer? = null
     private var _binding: FragmentCarDetailsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments?.getString(CARD_ID).isNullOrEmpty()) this.findNavController().navigateUp()
-        cardId = arguments?.getString(CARD_ID) ?: ""
-        Timber.e("cardId $cardId")
-        viewModel.fetchData(cardId)
     }
 
 
@@ -57,6 +53,9 @@ class CarDetailsFragment : Fragment() {
         binding.container.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+
+        videoPlayer = MediaPlayer()
+        binding.videoView.player = videoPlayer!!.getPlayerImpl(requireContext())
         return binding.root
     }
 
@@ -64,6 +63,7 @@ class CarDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.container.toolbar.menu.findItem(R.id.cart)
             .createCartBadge(3, requireContext())
+
 
         val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         val carMediaAdapter = CarMediaAdapter(object : OnItemClickListener {
@@ -84,23 +84,13 @@ class CarDetailsFragment : Fragment() {
             adapter = carMediaAdapter
             layoutManager = manager
         }
-        val mediaController = MediaController(requireContext())
-        mediaController.setAnchorView(binding.videoView)
+
         viewModel.selectedCarDetail.observe(viewLifecycleOwner) {
             if (it.type.contains("video")) {
-                //play video
-
                 binding.videoView.show()
                 binding.ivCar.hide()
-                binding.videoView.apply {
-                    setMediaController(mediaController)
-                    setVideoURI(Uri.parse(it.url))
-                    requestFocus()
-                    start()
-                }
+                videoPlayer?.play(it.url)
             } else {
-                binding.videoView.setMediaController(null)
-                mediaController.removeAllViews()
                 binding.videoView.hide()
                 binding.ivCar.show()
                 binding.ivCar.loadImage(it.url)
@@ -114,7 +104,7 @@ class CarDetailsFragment : Fragment() {
         }
 
         binding.retryButton.setOnClickListener {
-            viewModel.fetchData(cardId)
+            viewModel.fetchData()
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) {
@@ -127,6 +117,7 @@ class CarDetailsFragment : Fragment() {
                     binding.groupCarDetails.hide()
                     binding.videoView.hide()
                     binding.progressBar.hide()
+
                 }
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -150,6 +141,7 @@ class CarDetailsFragment : Fragment() {
         viewModel.carDetails.observe(viewLifecycleOwner) { carDetail ->
             val notAvailable = getString(R.string.not_available)
             if (carDetail != null) {
+                binding.tvCar.text = carDetail.carName ?: notAvailable
                 binding.tvCarNameDetail.text = carDetail.carName ?: notAvailable
                 binding.tvModelDetail.text = carDetail.model?.name ?: notAvailable
                 binding.tvYearDetail.text = carDetail.year.toString()
@@ -183,10 +175,10 @@ class CarDetailsFragment : Fragment() {
                 }
 
                 val price = if (carDetail.marketplacePrice != null) {
-                  NumberFormat.formatNumber(carDetail.marketplacePrice)
+                    NumberFormat.formatNumber(carDetail.marketplacePrice)
                 } else notAvailable
 
-                binding.tvPrice.text =  getString(R.string.price,price)
+                binding.tvPrice.text = getString(R.string.price, price)
                 binding.tvLocationDetail.text = locationBuilder.toString()
                 binding.tvOwnerTypeDetail.text = carDetail.ownerType ?: notAvailable
                 binding.tvTransmissionDetail.text = carDetail.transmission ?: notAvailable
@@ -202,10 +194,26 @@ class CarDetailsFragment : Fragment() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            videoPlayer?.releasePlayer()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            videoPlayer?.releasePlayer()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.videoView.setMediaController(null)
+        videoPlayer?.setMediaSessionState(false)
+        videoPlayer =null
         _binding = null
     }
+
+
 }

@@ -44,10 +44,6 @@ class ImageFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-//        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-//        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-//        requireActivity().window.statusBarColor = Color.TRANSPARENT
-
         return binding.root
     }
 

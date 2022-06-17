@@ -33,4 +33,5 @@
     <string name="retry">Retry</string>
     <string name="no_results">No results 😓</string>
     <string name="price">Price %s/=</string>
+    <string name="image_button_desc">media play and pause button</string>
 </resources>

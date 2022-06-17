@@ -1,4 +1,4 @@
-package com.github.didahdx.autochek.data.repository
+package com.github.didahdx.autochek.data
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

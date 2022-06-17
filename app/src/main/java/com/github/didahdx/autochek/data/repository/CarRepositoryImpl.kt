@@ -3,6 +3,8 @@ package com.github.didahdx.autochek.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.github.didahdx.autochek.data.CarPagingSource
+import com.github.didahdx.autochek.data.NETWORK_PAGE_SIZE
 import com.github.didahdx.autochek.data.remote.api.CarApiServices
 import com.github.didahdx.autochek.data.remote.dto.CarDetails
 import com.github.didahdx.autochek.data.remote.dto.CarList

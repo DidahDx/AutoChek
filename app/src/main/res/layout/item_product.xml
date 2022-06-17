@@ -39,6 +39,16 @@
             app:layout_constraintStart_toStartOf="@id/iv_image"
             app:layout_constraintTop_toTopOf="@id/iv_image" />
 
+        <ImageView
+            android:id="@+id/iv_like"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="7dp"
+            android:src="@drawable/ic_like"
+            app:layout_constraintTop_toTopOf="@id/iv_image"
+            app:layout_constraintEnd_toEndOf="@id/iv_image"
+            android:contentDescription="@string/favorite" />
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
