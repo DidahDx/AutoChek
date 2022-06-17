@@ -1,17 +1,11 @@
 package com.github.didahdx.autochek.ui.carDetails
 
-import android.media.MediaDrm
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
-import android.widget.SeekBar
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -27,21 +21,19 @@ import com.github.didahdx.autochek.ui.carDetails.adapter.CarMediaAdapter
 import com.github.didahdx.autochek.ui.carDetails.adapter.OnItemClickListener
 import com.github.didahdx.autochek.ui.fullScreenImage.ImageFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
-class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
-    MediaPlayer.OnPreparedListener {
+class CarDetailsFragment : Fragment() {
 
     companion object {
         const val CARD_ID = "cardId"
     }
-    private var mediaPlayer = MediaPlayer()
-    val viewModel by viewModels<CarDetailsViewModel>()
 
+    val viewModel by viewModels<CarDetailsViewModel>()
+    private var videoPlayer: MediaPlayer? = null
     private var _binding: FragmentCarDetailsBinding? = null
     private val binding get() = _binding!!
-        var URL: Uri = Uri.parse("")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments?.getString(CARD_ID).isNullOrEmpty()) this.findNavController().navigateUp()
@@ -61,19 +53,9 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
         binding.container.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        mediaPlayer.setOnPreparedListener(this)
-        binding.videoView.holder.addCallback(this)
-        binding.playButton.isEnabled = false
-        binding.playButton.setOnClickListener {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.pause()
-                binding.playButton.setImageResource(android.R.drawable.ic_media_play)
-            } else {
-                mediaPlayer.start()
-                binding.playButton.setImageResource(android.R.drawable.ic_media_pause)
-            }
-        }
 
+        videoPlayer = MediaPlayer()
+        binding.videoView.player = videoPlayer!!.getPlayerImpl(requireContext())
         return binding.root
     }
 
@@ -105,13 +87,10 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
 
         viewModel.selectedCarDetail.observe(viewLifecycleOwner) {
             if (it.type.contains("video")) {
-                URL = Uri.parse(it.url)
                 binding.videoView.show()
-                binding.playButton.show()
-                binding.videoView.holder.addCallback(this)
                 binding.ivCar.hide()
+                videoPlayer?.play(it.url)
             } else {
-                binding.playButton.hide()
                 binding.videoView.hide()
                 binding.ivCar.show()
                 binding.ivCar.loadImage(it.url)
@@ -138,7 +117,7 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
                     binding.groupCarDetails.hide()
                     binding.videoView.hide()
                     binding.progressBar.hide()
-                    binding.playButton.hide()
+
                 }
                 is UiState.Loading -> {
                     binding.progressBar.show()
@@ -147,7 +126,6 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
                     binding.retryButton.hide()
                     binding.tvError.hide()
                     binding.videoView.hide()
-                    binding.playButton.hide()
                 }
                 UiState.Success -> {
                     binding.retryButton.hide()
@@ -163,6 +141,7 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
         viewModel.carDetails.observe(viewLifecycleOwner) { carDetail ->
             val notAvailable = getString(R.string.not_available)
             if (carDetail != null) {
+                binding.tvCar.text = carDetail.carName ?: notAvailable
                 binding.tvCarNameDetail.text = carDetail.carName ?: notAvailable
                 binding.tvModelDetail.text = carDetail.model?.name ?: notAvailable
                 binding.tvYearDetail.text = carDetail.year.toString()
@@ -196,10 +175,10 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
                 }
 
                 val price = if (carDetail.marketplacePrice != null) {
-                  NumberFormat.formatNumber(carDetail.marketplacePrice)
+                    NumberFormat.formatNumber(carDetail.marketplacePrice)
                 } else notAvailable
 
-                binding.tvPrice.text =  getString(R.string.price,price)
+                binding.tvPrice.text = getString(R.string.price, price)
                 binding.tvLocationDetail.text = locationBuilder.toString()
                 binding.tvOwnerTypeDetail.text = carDetail.ownerType ?: notAvailable
                 binding.tvTransmissionDetail.text = carDetail.transmission ?: notAvailable
@@ -215,30 +194,26 @@ class CarDetailsFragment : Fragment(), SurfaceHolder.Callback,
 
     }
 
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mediaPlayer.release()
-        _binding = null
-    }
-
-    override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
-        mediaPlayer.apply {
-            setDataSource(requireContext().applicationContext, URL)
-            setDisplay(surfaceHolder)
-            prepareAsync()
+    override fun onPause() {
+        super.onPause()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            videoPlayer?.releasePlayer()
         }
     }
 
-    override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
+    override fun onStop() {
+        super.onStop()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            videoPlayer?.releasePlayer()
+        }
     }
 
-    override fun surfaceDestroyed(p0: SurfaceHolder) {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        videoPlayer?.setMediaSessionState(false)
+        videoPlayer =null
+        _binding = null
     }
 
-    override fun onPrepared(mediaPlayer: MediaPlayer?) {
-        binding.playButton.isEnabled = true
-    }
 
 }
