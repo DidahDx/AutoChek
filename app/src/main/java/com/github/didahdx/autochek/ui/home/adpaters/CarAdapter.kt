@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.github.didahdx.autochek.R
+import com.github.didahdx.autochek.common.NumberFormat
 import com.github.didahdx.autochek.common.extension.hide
 import com.github.didahdx.autochek.common.extension.show
 import com.github.didahdx.autochek.data.remote.dto.CarDetails
@@ -62,7 +63,14 @@ class CarAdapter(private val clickListener: OnItemClickListener) :
             }
             binding.tvLocation.text = locationBuilder.toString()
 
-            binding.tvPrice.text = twoDecimalPoint.format(carDetails.marketplacePrice)?.toString()
+            val price = if (carDetails.marketplacePrice != null) {
+                binding.root.context.getString(
+                    R.string.price_amount,
+                    NumberFormat.formatNumber(carDetails.marketplacePrice)
+                )
+            } else null
+
+            binding.tvPrice.text = price
 
             val rating = if (carDetails.gradeScore == null) {
                 notAvailable

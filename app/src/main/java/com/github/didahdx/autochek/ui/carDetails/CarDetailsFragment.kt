@@ -1,6 +1,5 @@
 package com.github.didahdx.autochek.ui.carDetails
 
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +16,7 @@ import com.github.didahdx.autochek.common.NumberFormat
 import com.github.didahdx.autochek.common.extension.*
 import com.github.didahdx.autochek.data.remote.dto.CarMedia
 import com.github.didahdx.autochek.databinding.FragmentCarDetailsBinding
+import com.github.didahdx.autochek.ui.carDetails.adapter.CarDetailsAdapter
 import com.github.didahdx.autochek.ui.carDetails.adapter.CarMediaAdapter
 import com.github.didahdx.autochek.ui.carDetails.adapter.OnItemClickListener
 import com.github.didahdx.autochek.ui.fullScreenImage.ImageFragment
@@ -54,9 +54,12 @@ class CarDetailsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        videoPlayer = MediaPlayer()
-        binding.videoView.player = videoPlayer!!.getPlayerImpl(requireContext())
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,6 +67,11 @@ class CarDetailsFragment : Fragment() {
         binding.container.toolbar.menu.findItem(R.id.cart)
             .createCartBadge(3, requireContext())
 
+
+
+        val managerCarDetail =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val carDetailsAdapter = CarDetailsAdapter()
 
         val manager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         val carMediaAdapter = CarMediaAdapter(object : OnItemClickListener {
@@ -85,11 +93,23 @@ class CarDetailsFragment : Fragment() {
             layoutManager = manager
         }
 
+        binding.rvCarDetails.apply {
+            adapter = carDetailsAdapter
+            layoutManager = managerCarDetail
+        }
+
+        viewModel.carDetailList.observe(viewLifecycleOwner) {
+            carDetailsAdapter.submitList(it)
+        }
+
         viewModel.selectedCarDetail.observe(viewLifecycleOwner) {
             if (it.type.contains("video")) {
+                videoPlayer = MediaPlayer()
+                binding.videoView.player = videoPlayer!!.getPlayerImpl(requireContext())
                 binding.videoView.show()
                 binding.ivCar.hide()
-                videoPlayer?.play(it.url)
+                videoPlayer?.play(it.url,requireContext())
+
             } else {
                 binding.videoView.hide()
                 binding.ivCar.show()
@@ -98,6 +118,9 @@ class CarDetailsFragment : Fragment() {
 
         }
 
+        viewModel.currentSeekTime.observe(viewLifecycleOwner){
+            videoPlayer?.setSeekTime(viewModel.currentSeekTime.value ?: 0)
+        }
 
         viewModel.carMedia.observe(viewLifecycleOwner) {
             carMediaAdapter.submitList(it)
@@ -114,7 +137,6 @@ class CarDetailsFragment : Fragment() {
                     binding.tvError.show()
                     binding.tvError.text = it.error
                     binding.groupTop.hide()
-                    binding.groupCarDetails.hide()
                     binding.videoView.hide()
                     binding.progressBar.hide()
 
@@ -122,7 +144,6 @@ class CarDetailsFragment : Fragment() {
                 is UiState.Loading -> {
                     binding.progressBar.show()
                     binding.groupTop.hide()
-                    binding.groupCarDetails.hide()
                     binding.retryButton.hide()
                     binding.tvError.hide()
                     binding.videoView.hide()
@@ -132,61 +153,28 @@ class CarDetailsFragment : Fragment() {
                     binding.tvError.hide()
                     binding.progressBar.hide()
                     binding.groupTop.show()
-                    binding.groupCarDetails.show()
                 }
             }
         }
 
 
         viewModel.carDetails.observe(viewLifecycleOwner) { carDetail ->
-            val notAvailable = getString(R.string.not_available)
             if (carDetail != null) {
+                val notAvailable = getString(R.string.not_available)
                 binding.tvCar.text = carDetail.carName ?: notAvailable
-                binding.tvCarNameDetail.text = carDetail.carName ?: notAvailable
-                binding.tvModelDetail.text = carDetail.model?.name ?: notAvailable
-                binding.tvYearDetail.text = carDetail.year.toString()
-                binding.tvEngineTypeDetail.text = carDetail.engineType ?: notAvailable
 
-                val millage = if (carDetail.mileage != null) {
-                    NumberFormat.formatNumber(carDetail.mileage) + " " + carDetail.mileageUnit
-                } else notAvailable
+                val price = if (carDetail.marketplacePrice != null) {
+                    getString(R.string.price_amount,
+                        NumberFormat.formatNumber(carDetail.marketplacePrice))
+                } else getString(R.string.price_not_available)
 
-                binding.tvMileageDetail.text = millage
-
-                val locationBuilder = StringBuilder()
-                if (carDetail.state != null && carDetail.state.isNotEmpty()) {
-                    locationBuilder.append(carDetail.state)
-                }
-                if (carDetail.city != null && carDetail.city.isNotEmpty()) {
-                    locationBuilder.append(", ${carDetail.city}")
-                }
-                if (carDetail.country != null && carDetail.country.isNotEmpty()) {
-                    locationBuilder.append(", ${carDetail.country}")
-                }
-
-                if (locationBuilder.isEmpty()) {
-                    locationBuilder.append(notAvailable)
-                }
+                binding.tvPrice.text = price
 
                 if (carDetail.sold != null && carDetail.sold) {
                     binding.tvSold.show()
                 } else {
                     binding.tvSold.hide()
                 }
-
-                val price = if (carDetail.marketplacePrice != null) {
-                    NumberFormat.formatNumber(carDetail.marketplacePrice)
-                } else notAvailable
-
-                binding.tvPrice.text = getString(R.string.price, price)
-                binding.tvLocationDetail.text = locationBuilder.toString()
-                binding.tvOwnerTypeDetail.text = carDetail.ownerType ?: notAvailable
-                binding.tvTransmissionDetail.text = carDetail.transmission ?: notAvailable
-                binding.tvConditionDetail.text = carDetail.sellingCondition ?: notAvailable
-                binding.tvFuelTypeDetail.text = carDetail.fuelType ?: notAvailable
-                binding.tvBodyTypeDetail.text = carDetail.bodyType?.name ?: notAvailable
-                binding.tvInteriorColorDetail.text = carDetail.interiorColor ?: notAvailable
-                binding.tvExteriorColorDetail.text = carDetail.exteriorColor ?: notAvailable
 
             }
         }
@@ -196,6 +184,7 @@ class CarDetailsFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        viewModel.updateSeekTime(videoPlayer?.getSeekTime() ?: 0)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             videoPlayer?.releasePlayer()
         }
@@ -211,7 +200,7 @@ class CarDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         videoPlayer?.setMediaSessionState(false)
-        videoPlayer =null
+        videoPlayer = null
         _binding = null
     }
 

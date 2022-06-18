@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.didahdx.autochek.R
-import com.github.didahdx.autochek.databinding.FragmentFavouriteBinding
 import com.github.didahdx.autochek.databinding.FragmentNotificationBinding
 
 class NotificationFragment : Fragment() {
@@ -21,7 +20,7 @@ class NotificationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentNotificationBinding.inflate(inflater,container,false)
+        _binding = FragmentNotificationBinding.inflate(inflater, container, false)
         binding.container.toolbar.title = getString(R.string.notification)
         return binding.root
     }
