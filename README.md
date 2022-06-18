@@ -22,7 +22,7 @@ The project is built using the MVVM architectural pattern. Mvvm allows for the s
   <img src="art/home.png" width="200" style="max-width:100%;"> <img src="art/car_detail.png" width="200" style="max-width:100%;">
   <img src="art/car_details_1.png" width="200" style="max-width:100%;"> <img src="art/car_details_2.png" width="200" style="max-width:100%;"> 
 <img src="art/image_full_screen.png" width="200" style="max-width:100%;"> <img src="art/car_detail_3.png" width="200" style="max-width:100%;">
-  <img src="art/image_full_screen_1.png" width="200" style="max-width:100%;">
+  <img src="art/image_full_screen_1.png" width="200" style="max-width:100%;"> <img src="art/car_detail_video.png" width="200" style="max-width:100%;">
 
 ## Libraries
 
