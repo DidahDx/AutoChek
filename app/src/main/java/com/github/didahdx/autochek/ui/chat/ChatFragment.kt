@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.didahdx.autochek.R
 import com.github.didahdx.autochek.databinding.FragmentChatBinding
-import com.github.didahdx.autochek.databinding.FragmentFavouriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +19,7 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentChatBinding.inflate(inflater,container,false)
+        _binding = FragmentChatBinding.inflate(inflater, container, false)
         binding.container.toolbar.title = getString(R.string.chat)
         return binding.root
     }

@@ -24,39 +24,46 @@ class MediaPlayer {
         private const val TAG = "MediaPlayerTag"
     }
 
-    private lateinit var exoPlayer: ExoPlayer
-    private lateinit var context: Context
-    private lateinit var mediaSession: MediaSessionCompat
-    private lateinit var stateBuilder: PlaybackStateCompat.Builder
+    private var exoPlayer: ExoPlayer? =null
+    private var mediaSession: MediaSessionCompat? = null
+    private  var stateBuilder: PlaybackStateCompat.Builder ? = null
 
-     fun play(url: String) {
+    fun play(url: String,context: Context) {
         val userAgent = Util.getUserAgent(context, context.getString(R.string.app_name))
         val mediaSource = ExtractorMediaSource.Factory(DefaultDataSourceFactory(context, userAgent))
             .setExtractorsFactory(DefaultExtractorsFactory())
             .createMediaSource(Uri.parse(url))
 
-        exoPlayer.prepare(mediaSource)
+        exoPlayer?.prepare(mediaSource)
 
-        exoPlayer.playWhenReady = true
+        exoPlayer?.playWhenReady = true
     }
 
-     fun getPlayerImpl(context: Context): ExoPlayer {
-        this.context = context
-        initializePlayer()
-        initializeMediaSession()
-        return exoPlayer
+    fun getPlayerImpl(context: Context): ExoPlayer {
+//        this.context = context
+        initializePlayer(context)
+        initializeMediaSession(context)
+        return exoPlayer!!
     }
 
-     fun releasePlayer() {
-        exoPlayer.stop()
-        exoPlayer.release()
+    fun releasePlayer() {
+        exoPlayer?.stop()
+        exoPlayer?.release()
     }
 
-     fun setMediaSessionState(isActive: Boolean) {
-        mediaSession.isActive = isActive
+    fun setMediaSessionState(isActive: Boolean) {
+        mediaSession?.isActive = isActive
     }
 
-    private fun initializePlayer() {
+    fun getSeekTime(): Long{
+        return exoPlayer?.currentPosition ?: 0L
+    }
+
+    fun setSeekTime(currentTime: Long){
+        exoPlayer?.seekTo(currentTime)
+    }
+
+    private fun initializePlayer(context: Context) {
 
         val trackSelector = DefaultTrackSelector()
         val loadControl = DefaultLoadControl()
@@ -65,13 +72,13 @@ class MediaPlayer {
         exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl)
     }
 
-    private fun initializeMediaSession() {
+    private fun initializeMediaSession(context: Context) {
         mediaSession = MediaSessionCompat(context, TAG)
-        mediaSession.setFlags(
+        mediaSession?.setFlags(
             MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
                     MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
         )
-        mediaSession.setMediaButtonReceiver(null)
+        mediaSession?.setMediaButtonReceiver(null)
 
         stateBuilder = PlaybackStateCompat.Builder()
             .setActions(
@@ -82,11 +89,11 @@ class MediaPlayer {
                         PlaybackStateCompat.ACTION_REWIND
             )
 
-        mediaSession.setPlaybackState(stateBuilder.build())
+        mediaSession?.setPlaybackState(stateBuilder?.build())
 
-        mediaSession.setCallback(SessionCallback())
+        mediaSession?.setCallback(SessionCallback())
 
-        mediaSession.isActive = true
+        mediaSession?.isActive = true
     }
 
     private inner class SessionCallback : MediaSessionCompat.Callback() {
@@ -94,19 +101,19 @@ class MediaPlayer {
         private val SEEK_WINDOW_MILLIS = 10000
 
         override fun onPlay() {
-            exoPlayer.playWhenReady = true
+            exoPlayer?.playWhenReady = true
         }
 
         override fun onPause() {
-            exoPlayer.playWhenReady = false
+            exoPlayer?.playWhenReady = false
         }
 
         override fun onRewind() {
-            exoPlayer.seekTo(exoPlayer.currentPosition - SEEK_WINDOW_MILLIS)
+            exoPlayer?.seekTo(exoPlayer?.currentPosition?.minus(SEEK_WINDOW_MILLIS) ?: 0)
         }
 
         override fun onFastForward() {
-            exoPlayer.seekTo(exoPlayer.currentPosition + SEEK_WINDOW_MILLIS)
+            exoPlayer?.seekTo(exoPlayer?.currentPosition?.plus(SEEK_WINDOW_MILLIS) ?: 0)
         }
     }
 }

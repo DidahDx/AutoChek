@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.didahdx.autochek.R
 import com.github.didahdx.autochek.databinding.FragmentFavouriteBinding
-import com.github.didahdx.autochek.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,7 +22,7 @@ class FavouriteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFavouriteBinding.inflate(inflater,container, false)
+        _binding = FragmentFavouriteBinding.inflate(inflater, container, false)
         binding.container.toolbar.title = getString(R.string.favorite)
         return binding.root
     }

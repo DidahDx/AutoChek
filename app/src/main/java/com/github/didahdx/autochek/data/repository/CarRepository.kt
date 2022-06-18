@@ -1,6 +1,7 @@
 package com.github.didahdx.autochek.data.repository
 
 import androidx.paging.PagingData
+import com.github.didahdx.autochek.data.model.Details
 import com.github.didahdx.autochek.data.remote.dto.CarDetails
 import com.github.didahdx.autochek.data.remote.dto.CarList
 import com.github.didahdx.autochek.data.remote.dto.CarMediaList
@@ -17,4 +18,5 @@ interface CarRepository {
     fun getCarListPaging(): Flow<PagingData<CarDetails>>
     suspend fun getCarDetails(cardId: String): CarDetailsList
     suspend fun getCarMedia(cardId: String): CarMediaList
+    suspend fun getCarDetails(carDetailsList: CarDetailsList): List<Details>
 }
