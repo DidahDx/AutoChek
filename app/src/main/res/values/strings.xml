@@ -32,6 +32,18 @@
     <string name="exterior_color">Exterior Color</string>
     <string name="retry">Retry</string>
     <string name="no_results">No results 😓</string>
-    <string name="price">Price %s/=</string>
+    <string name="price">Price</string>
+    <string name="price_amount">Ksh %s/=</string>
     <string name="image_button_desc">media play and pause button</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="error_message">😨 Wooops %s</string>
+    <string name="state">State</string>
+    <string name="city">City</string>
+    <string name="country">Country</string>
+    <string name="vin">Vin</string>
+    <string name="vehicle_id">Vehicle Id</string>
+    <string name="has_financing">Has Financing</string>
+    <string name="has_warranty">Has Warranty</string>
+    <string name="price_not_available">Price not available</string>
 </resources>

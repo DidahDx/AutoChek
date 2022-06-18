@@ -10,7 +10,6 @@ import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.didahdx.autochek.R
 import com.github.didahdx.autochek.ui.customViews.BadgeDrawable
 

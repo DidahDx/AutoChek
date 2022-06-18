@@ -4,7 +4,6 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -24,6 +23,7 @@ import com.github.didahdx.autochek.ui.home.adpaters.CarAdapter
 import com.github.didahdx.autochek.ui.home.adpaters.CarLoadStateAdapter
 import com.github.didahdx.autochek.ui.home.adpaters.OnItemClickListener
 import com.github.didahdx.autochek.ui.home.adpaters.PopularMakeAdapter
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -127,11 +127,12 @@ class HomeFragment : Fragment() {
                     ?: loadState.append as? LoadState.Error
                     ?: loadState.prepend as? LoadState.Error
                 errorState?.let {
-                    Toast.makeText(
-                        requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.error_message, it.error),
+                        Snackbar.LENGTH_LONG
+                    )
+                        .show()
                 }
             }
         }
