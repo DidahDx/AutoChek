@@ -46,4 +46,5 @@
     <string name="has_financing">Has Financing</string>
     <string name="has_warranty">Has Warranty</string>
     <string name="price_not_available">Price not available</string>
+    <string name="apply_for_car_loan">Apply for Car Loan</string>
 </resources>

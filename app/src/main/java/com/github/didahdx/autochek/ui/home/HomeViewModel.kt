@@ -19,6 +19,10 @@ class HomeViewModel @Inject constructor(
     val popularMake: MutableLiveData<List<Make>> = MutableLiveData<List<Make>>()
     val carFlowList = carRepository.getCarListPaging().cachedIn(viewModelScope)
 
+    init {
+        fetchCarData()
+    }
+
     fun fetchCarData() {
         viewModelScope.launch {
             try {
