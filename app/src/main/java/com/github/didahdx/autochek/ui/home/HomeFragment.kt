@@ -3,7 +3,10 @@ package com.github.didahdx.autochek.ui.home
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -15,6 +18,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.didahdx.autochek.R
 import com.github.didahdx.autochek.common.extension.navigateSafe
+import com.github.didahdx.autochek.common.extension.show
 import com.github.didahdx.autochek.data.remote.dto.CarDetails
 import com.github.didahdx.autochek.databinding.FragmentHomeBinding
 import com.github.didahdx.autochek.ui.carDetails.CarDetailsFragment
@@ -23,6 +27,8 @@ import com.github.didahdx.autochek.ui.home.adpaters.CarAdapter
 import com.github.didahdx.autochek.ui.home.adpaters.CarLoadStateAdapter
 import com.github.didahdx.autochek.ui.home.adpaters.OnItemClickListener
 import com.github.didahdx.autochek.ui.home.adpaters.PopularMakeAdapter
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -52,7 +58,11 @@ class HomeFragment : Fragment() {
         binding.container.toolbar.title = getString(R.string.explore)
         binding.container.toolbar.navigationIcon = ContextCompat
             .getDrawable(requireContext(), R.drawable.ic_squares_four)
-        viewModel.fetchCarData()
+
+        val bottomBar: BottomAppBar = requireActivity().findViewById(R.id.bottom_bar)
+        val fab: FloatingActionButton = requireActivity().findViewById(R.id.fab)
+        fab.show()
+        bottomBar.show()
         return view
     }
 
@@ -127,11 +137,12 @@ class HomeFragment : Fragment() {
                     ?: loadState.append as? LoadState.Error
                     ?: loadState.prepend as? LoadState.Error
                 errorState?.let {
+                    val fab: FloatingActionButton = requireActivity().findViewById(R.id.fab)
                     Snackbar.make(
-                        binding.root,
+                        fab,
                         getString(R.string.error_message, it.error),
                         Snackbar.LENGTH_LONG
-                    )
+                    ).setAnchorView(fab)
                         .show()
                 }
             }
@@ -150,15 +161,6 @@ class HomeFragment : Fragment() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.home_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        createCartBadge(0)
-        super.onPrepareOptionsMenu(menu)
-    }
 
     private fun createCartBadge(paramInt: Int) {
         if (Build.VERSION.SDK_INT <= 15) {

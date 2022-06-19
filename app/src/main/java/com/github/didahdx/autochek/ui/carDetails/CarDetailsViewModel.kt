@@ -28,7 +28,9 @@ class CarDetailsViewModel @Inject constructor(
     val selectedCarDetail = MutableLiveData<CarMedia>()
     val carDetailList = MutableLiveData<List<Details>>()
     val uiState = MutableLiveData<UiState>()
-    val currentSeekTime = MutableLiveData<Long>()
+    var playWhenReady = true
+    var currentItem = 0
+    var playbackPosition = 0L
 
     init {
         fetchData()
@@ -70,9 +72,4 @@ class CarDetailsViewModel @Inject constructor(
         }
     }
 
-    fun updateSeekTime(seek:Long){
-        viewModelScope.launch {
-            currentSeekTime.postValue(seek)
-        }
-    }
 }
