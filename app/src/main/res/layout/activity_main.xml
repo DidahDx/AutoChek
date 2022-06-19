@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        android:layout_marginBottom="?attr/actionBarSize"
         app:navGraph="@navigation/nav_graph"/>
 
     <com.google.android.material.bottomappbar.BottomAppBar
@@ -22,6 +21,8 @@
         app:fabCradleMargin="0dp"
         app:fabCradleRoundedCornerRadius="0dp"
         android:layout_height="wrap_content"
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways"
         android:layout_gravity="bottom">
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -34,11 +35,14 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_bag_yellow"
         app:layout_anchor="@id/bottom_bar"
         android:background="@color/black"
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways"
         android:contentDescription="@string/cart" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

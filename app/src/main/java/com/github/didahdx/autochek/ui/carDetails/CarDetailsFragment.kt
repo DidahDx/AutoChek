@@ -1,6 +1,5 @@
 package com.github.didahdx.autochek.ui.carDetails
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
+import androidx.media3.common.util.Util
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.didahdx.autochek.R
@@ -20,7 +25,13 @@ import com.github.didahdx.autochek.ui.carDetails.adapter.CarDetailsAdapter
 import com.github.didahdx.autochek.ui.carDetails.adapter.CarMediaAdapter
 import com.github.didahdx.autochek.ui.carDetails.adapter.OnItemClickListener
 import com.github.didahdx.autochek.ui.fullScreenImage.ImageFragment
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+
+
+private const val TAG = "CarDetailsFragment"
 
 @AndroidEntryPoint
 class CarDetailsFragment : Fragment() {
@@ -29,8 +40,11 @@ class CarDetailsFragment : Fragment() {
         const val CARD_ID = "cardId"
     }
 
+    private val playbackStateListener: Player.Listener = playbackStateListener()
+    private var player: ExoPlayer? = null
+
+
     val viewModel by viewModels<CarDetailsViewModel>()
-    private var videoPlayer: MediaPlayer? = null
     private var _binding: FragmentCarDetailsBinding? = null
     private val binding get() = _binding!!
 
@@ -54,20 +68,20 @@ class CarDetailsFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        val bottomBar: BottomAppBar = requireActivity().findViewById(R.id.bottom_bar)
+        val fab: FloatingActionButton = requireActivity().findViewById(R.id.fab)
+
+        fab.hide()
+        bottomBar.hide()
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireContext().setTheme(R.style.Theme_SampleApp)
         binding.container.toolbar.menu.findItem(R.id.cart)
             .createCartBadge(3, requireContext())
-
-
 
         val managerCarDetail =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -104,13 +118,16 @@ class CarDetailsFragment : Fragment() {
 
         viewModel.selectedCarDetail.observe(viewLifecycleOwner) {
             if (it.type.contains("video")) {
-                videoPlayer = MediaPlayer()
-                binding.videoView.player = videoPlayer!!.getPlayerImpl(requireContext())
                 binding.videoView.show()
                 binding.ivCar.hide()
-                videoPlayer?.play(it.url,requireContext())
-
+                playVideo(it.url)
             } else {
+                if (player != null && player?.isPlaying == true) {
+                    player?.pause()
+                    viewModel.playbackPosition = player?.currentPosition ?: 0
+                    viewModel.currentItem = player?.currentMediaItemIndex ?: 0
+                    viewModel.playWhenReady = player?.playWhenReady ?: true
+                }
                 binding.videoView.hide()
                 binding.ivCar.show()
                 binding.ivCar.loadImage(it.url)
@@ -118,9 +135,6 @@ class CarDetailsFragment : Fragment() {
 
         }
 
-        viewModel.currentSeekTime.observe(viewLifecycleOwner){
-            videoPlayer?.setSeekTime(viewModel.currentSeekTime.value ?: 0)
-        }
 
         viewModel.carMedia.observe(viewLifecycleOwner) {
             carMediaAdapter.submitList(it)
@@ -139,6 +153,7 @@ class CarDetailsFragment : Fragment() {
                     binding.groupTop.hide()
                     binding.videoView.hide()
                     binding.progressBar.hide()
+                    binding.btnLoan.hide()
 
                 }
                 is UiState.Loading -> {
@@ -147,12 +162,14 @@ class CarDetailsFragment : Fragment() {
                     binding.retryButton.hide()
                     binding.tvError.hide()
                     binding.videoView.hide()
+                    binding.btnLoan.hide()
                 }
                 UiState.Success -> {
                     binding.retryButton.hide()
                     binding.tvError.hide()
                     binding.progressBar.hide()
                     binding.groupTop.show()
+                    binding.btnLoan.show()
                 }
             }
         }
@@ -164,8 +181,10 @@ class CarDetailsFragment : Fragment() {
                 binding.tvCar.text = carDetail.carName ?: notAvailable
 
                 val price = if (carDetail.marketplacePrice != null) {
-                    getString(R.string.price_amount,
-                        NumberFormat.formatNumber(carDetail.marketplacePrice))
+                    getString(
+                        R.string.price_amount,
+                        NumberFormat.formatNumber(carDetail.marketplacePrice)
+                    )
                 } else getString(R.string.price_not_available)
 
                 binding.tvPrice.text = price
@@ -182,27 +201,95 @@ class CarDetailsFragment : Fragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (Util.SDK_INT > 23) {
+            initializePlayer()
+            val carMedia = viewModel.selectedCarDetail.value
+            if (carMedia != null && carMedia.type.contains("video")) {
+                playVideo(carMedia.url)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Util.SDK_INT <= 23 || player == null) {
+            initializePlayer()
+            val carMedia = viewModel.selectedCarDetail.value
+            if (carMedia != null && carMedia.type.contains("video")) {
+                playVideo(carMedia.url)
+            }
+        }
+    }
+
     override fun onPause() {
         super.onPause()
-        viewModel.updateSeekTime(videoPlayer?.getSeekTime() ?: 0)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            videoPlayer?.releasePlayer()
+        if (Util.SDK_INT <= 23) {
+            releasePlayer()
         }
     }
 
     override fun onStop() {
         super.onStop()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            videoPlayer?.releasePlayer()
+        if (Util.SDK_INT > 23) {
+            releasePlayer()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        videoPlayer?.setMediaSessionState(false)
-        videoPlayer = null
         _binding = null
     }
 
 
+    private fun initializePlayer() {
+        val trackSelector = DefaultTrackSelector(requireContext()).apply {
+            setParameters(buildUponParameters().setMaxVideoSizeSd())
+        }
+        player = ExoPlayer.Builder(requireContext())
+            .setTrackSelector(trackSelector)
+            .build()
+            .also { exoPlayer ->
+                binding.videoView.player = exoPlayer
+            }
+    }
+
+    private fun playVideo(url: String) {
+        val mediaItem = MediaItem.Builder()
+            .setUri(url)
+            .setMimeType(MimeTypes.BASE_TYPE_VIDEO)
+            .build()
+        player?.setMediaItem(mediaItem)
+        player?.playWhenReady = viewModel.playWhenReady
+        player?.seekTo(viewModel.currentItem, viewModel.playbackPosition)
+        player?.addListener(playbackStateListener)
+        player?.prepare()
+    }
+
+    private fun releasePlayer() {
+        player?.let { exoPlayer ->
+            viewModel.playbackPosition = exoPlayer.currentPosition
+            viewModel.currentItem = exoPlayer.currentMediaItemIndex
+            viewModel.playWhenReady = exoPlayer.playWhenReady
+            exoPlayer.removeListener(playbackStateListener)
+            exoPlayer.release()
+        }
+        player = null
+    }
+
+
+}
+
+private fun playbackStateListener() = object : Player.Listener {
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        val stateString: String = when (playbackState) {
+            ExoPlayer.STATE_IDLE -> "ExoPlayer.STATE_IDLE      -"
+            ExoPlayer.STATE_BUFFERING -> "ExoPlayer.STATE_BUFFERING -"
+            ExoPlayer.STATE_READY -> "ExoPlayer.STATE_READY     -"
+            ExoPlayer.STATE_ENDED -> "ExoPlayer.STATE_ENDED     -"
+            else -> "UNKNOWN_STATE             -"
+        }
+        Timber.tag(TAG).d("changed state to %s", stateString)
+    }
 }

@@ -4,6 +4,7 @@ buildscript {
          nav_version = "2.4.2"
         pagingVersion = "3.1.0"
          lottieVersion = "5.2.0"
+        mediaVersion = "1.0.0-alpha03"
     }
     dependencies {
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'

@@ -73,9 +73,21 @@ class CarRepositoryImpl @Inject constructor(
             )
         } else null
 
-        val sold = if (carDetail.sold != null && carDetail.sold) { application.getString(R.string.yes) } else { application.getString(R.string.no) }
-        val hasFinancing = if (carDetail.hasFinancing != null && carDetail.hasFinancing) { application.getString(R.string.yes) } else { application.getString(R.string.no) }
-        val hasWarranty = if (carDetail.hasWarranty != null && carDetail.hasWarranty) { application.getString(R.string.yes) } else { application.getString(R.string.no) }
+        val sold = if (carDetail.sold != null && carDetail.sold) {
+            application.getString(R.string.yes)
+        } else {
+            application.getString(R.string.no)
+        }
+        val hasFinancing = if (carDetail.hasFinancing != null && carDetail.hasFinancing) {
+            application.getString(R.string.yes)
+        } else {
+            application.getString(R.string.no)
+        }
+        val hasWarranty = if (carDetail.hasWarranty != null && carDetail.hasWarranty) {
+            application.getString(R.string.yes)
+        } else {
+            application.getString(R.string.no)
+        }
 
         detail.add(Details(R.string.price, price))
         detail.add(Details(R.string.vin, carDetail.vin))
