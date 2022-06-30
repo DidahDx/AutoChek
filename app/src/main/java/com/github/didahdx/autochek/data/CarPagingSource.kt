@@ -2,6 +2,7 @@ package com.github.didahdx.autochek.data
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.github.didahdx.autochek.common.Constants.CAR_PAGE_INDEX
 import com.github.didahdx.autochek.data.remote.api.CarApiServices
 import com.github.didahdx.autochek.data.remote.dto.CarDetails
 import retrofit2.HttpException
@@ -12,8 +13,7 @@ import javax.inject.Singleton
 /**
  * @author Daniel Didah on 6/14/22
  */
-private const val CAR_PAGE_INDEX = 1
-const val NETWORK_PAGE_SIZE = 30
+
 
 @Singleton
 class CarPagingSource @Inject constructor(

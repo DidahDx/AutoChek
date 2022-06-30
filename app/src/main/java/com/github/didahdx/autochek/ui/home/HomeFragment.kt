@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.didahdx.autochek.R
 import com.github.didahdx.autochek.common.extension.navigateSafe
 import com.github.didahdx.autochek.common.extension.show
@@ -52,7 +53,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
         binding.container.toolbar.title = getString(R.string.explore)
@@ -86,10 +87,6 @@ class HomeFragment : Fragment() {
             }
         })
 
-        carAdapter.withLoadStateHeaderAndFooter(
-            header = CarLoadStateAdapter { carAdapter.retry() },
-            footer = CarLoadStateAdapter { carAdapter.retry() }
-        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             carAdapter.loadStateFlow.collect { loadState ->
@@ -112,7 +109,10 @@ class HomeFragment : Fragment() {
 
         binding.rvCars.apply {
             layoutManager = carManager
-            this.adapter = carAdapter
+            this.adapter = carAdapter.withLoadStateHeaderAndFooter(
+                header = CarLoadStateAdapter { carAdapter.retry() },
+                footer = CarLoadStateAdapter { carAdapter.retry() }
+            )
         }
 
 
@@ -156,6 +156,18 @@ class HomeFragment : Fragment() {
             carAdapter.retry()
             viewModel.fetchCarData()
         }
+
+        val fab: FloatingActionButton = requireActivity().findViewById(R.id.fab)
+        binding.rvCars.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0 && fab.visibility == View.VISIBLE) {
+                    fab.hide()
+                } else if (dy < 0 && fab.visibility != View.VISIBLE) {
+                    fab.show()
+                }
+            }
+        })
 
         createCartBadge(3)
 
